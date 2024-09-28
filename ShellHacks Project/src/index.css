@@ -1,0 +1,10 @@
+::backdrop {
+  color: hsl(0, 2%, 10%);
+  width: auto;
+  height: auto;
+}
+div {
+  align-items: center;
+  width: auto;
+  height: auto;
+}

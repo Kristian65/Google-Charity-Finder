@@ -1,7 +1,12 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import Map from "./Map";
 import * as THREE from "three";
 
 function Globe() {
+  //Create bool state for Globe/Map
+  const [showMap, setshowMap] = useState(false);
+  if (showMap) return;
+
   // Create a ref for the DOM element
   const mountRef = useRef(null);
 
@@ -16,7 +21,7 @@ function Globe() {
     );
     const renderer = new THREE.WebGLRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
-    
+
     // Append the renderer to the ref's current node
     mountRef.current.appendChild(renderer.domElement);
 
@@ -38,15 +43,26 @@ function Globe() {
       globe.rotation.y += 0.0015; // Rotate the globe
       renderer.render(scene, camera);
     }
-    
+
     animate();
 
     return () => {
-        mountRef.current.removeChild(renderer.domElement);
+      mountRef.current.removeChild(renderer.domElement);
     };
-  }, []);
+  }, [showMap]);
 
-  return <div ref={mountRef}></div>;
+  if (showMap) {
+    return <div className="earth-map"></div>;
+  }
+  return (
+    <div
+      ref={mountRef}
+      className="earth-globe"
+      onClick={() => {
+        setshowMap((prevState) => !prevState);
+      }}
+    ></div>
+  );
 }
 
 export default Globe;
