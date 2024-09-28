@@ -9,6 +9,7 @@ function Globe() {
 
   // Create a ref for the DOM element
   const mountRef = useRef(null);
+  const mapRef = useRef(null);
 
   useEffect(() => {
     // Set up the scene, camera, and renderer
@@ -19,8 +20,9 @@ function Globe() {
       0.1,
       1000
     );
-    const renderer = new THREE.WebGLRenderer();
+    const renderer = new THREE.WebGLRenderer({ alpha: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setClearColor(0x000000, 0);
 
     // Append the renderer to the ref's current node
     mountRef.current.appendChild(renderer.domElement);
@@ -30,7 +32,7 @@ function Globe() {
     const earthTexture = textureLoader.load("/1_earth_16k.jpg");
 
     // Create a sphere geometry and apply the texture
-    const geometry = new THREE.SphereGeometry(5, 64, 64);
+    const geometry = new THREE.SphereGeometry(4, 48, 48);
     const material = new THREE.MeshBasicMaterial({ map: earthTexture });
     const globe = new THREE.Mesh(geometry, material);
 
@@ -48,6 +50,24 @@ function Globe() {
 
     return () => {
       mountRef.current.removeChild(renderer.domElement);
+    };
+  }, [showMap]);
+
+  //Load Map
+  useEffect(() => {
+    if (!showMap) return;
+    const loadGoogleMaps = () => {
+      //Input API KEY
+      script.src = `https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap`;
+      script.async = true;
+      window.initMap = () => {
+        const map = new google.maps.Map(mapRef.current, {
+          center: { lat: 0, lng: 0 },
+          zoom: 0,
+        });
+        mapRef.current = map;
+      };
+      document.head.appendChild(script);
     };
   }, [showMap]);
 
